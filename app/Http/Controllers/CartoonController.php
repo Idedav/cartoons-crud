@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cartoon;
+use App\Http\Requests\CartoonRequest;
 
 class CartoonController extends Controller
 {
@@ -14,7 +15,7 @@ class CartoonController extends Controller
      */
     public function index()
     {
-        $cartoons = Cartoon::all();
+        $cartoons = Cartoon::orderBy("id", "desc")->paginate(10);
         return view("cartoons.index", compact("cartoons"));
     }
 
@@ -25,7 +26,7 @@ class CartoonController extends Controller
      */
     public function create()
     {
-        //
+        return view("cartoons.create");
     }
 
     /**
@@ -34,9 +35,16 @@ class CartoonController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CartoonRequest $request)
     {
-        //
+        $form_data = $request->all();
+
+        $new_cartoon = new Cartoon();
+        $form_data['slug'] = Cartoon::generateSlug($form_data['title']);
+        $new_cartoon->fill($form_data);
+        $new_cartoon->save();
+
+        return redirect()->route("cartoons.show", $new_cartoon);
     }
 
     /**
@@ -45,9 +53,9 @@ class CartoonController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Cartoon $cartoon)
     {
-        //
+        return view("cartoons.show", compact("cartoon"));
     }
 
     /**
@@ -56,9 +64,9 @@ class CartoonController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Cartoon $cartoon)
     {
-        //
+        return view("cartoons.edit", compact("cartoon"));
     }
 
     /**
@@ -68,9 +76,16 @@ class CartoonController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CartoonRequest $request, Cartoon $cartoon)
     {
-        //
+        $form_data = $request->all();
+        if ($cartoon->title == $form_data['title']) {
+            $form_data['slug'] = $cartoon->slug;
+        } else {
+            $form_data['slug'] = Cartoon::generateSlug($form_data['title']);
+        }
+        $cartoon->update($form_data);
+        return redirect()->route("cartoons.show", $cartoon);
     }
 
     /**
@@ -79,8 +94,9 @@ class CartoonController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Cartoon $cartoon)
     {
-        //
+        $cartoon->delete();
+        return redirect()->route("cartoons.index");
     }
 }

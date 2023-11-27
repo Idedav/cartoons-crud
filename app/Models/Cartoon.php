@@ -10,12 +10,25 @@ class Cartoon extends Model
 {
     use HasFactory;
 
-    public static function generateSlug($title){
+    protected $fillable = [
+        'title',
+        'slug',
+        'year',
+        'creator',
+        'rating',
+        'genre',
+        'runtime_in_minutes',
+        'episodes',
+        'image'
+    ];
+
+    public static function generateSlug($title)
+    {
         $slug = Str::slug($title, "-");
         $original_slug = $slug;
         $exists = Cartoon::where("slug", $slug)->first();
         $c = 1;
-        while($exists){
+        while ($exists) {
             $slug = $original_slug . "-" . $c;
             $exists = Cartoon::where("slug", $slug)->first();
 
