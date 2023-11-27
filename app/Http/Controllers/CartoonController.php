@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cartoon;
+<<<<<<< HEAD
 use App\Http\Requests\CartoonRequest;
+=======
+use App\Http\Requests\Cartoonrequest;
+>>>>>>> 6d7363966d2f402269186b579631dba990d20d7f
 
 class CartoonController extends Controller
 {
@@ -40,8 +44,14 @@ class CartoonController extends Controller
         $form_data = $request->all();
 
         $new_cartoon = new Cartoon();
+<<<<<<< HEAD
         $form_data['slug'] = Cartoon::generateSlug($form_data['title']);
         $new_cartoon->fill($form_data);
+=======
+        $form_data["slug"] = Cartoon::generateSlug($form_data["title"]);
+
+        $new_cartoon -> fill($form_data);
+>>>>>>> 6d7363966d2f402269186b579631dba990d20d7f
         $new_cartoon->save();
 
         return redirect()->route("cartoons.show", $new_cartoon);
@@ -55,6 +65,10 @@ class CartoonController extends Controller
      */
     public function show(Cartoon $cartoon)
     {
+<<<<<<< HEAD
+=======
+        $cartoon = Cartoon::find($id);
+>>>>>>> 6d7363966d2f402269186b579631dba990d20d7f
         return view("cartoons.show", compact("cartoon"));
     }
 
@@ -78,6 +92,7 @@ class CartoonController extends Controller
      */
     public function update(CartoonRequest $request, Cartoon $cartoon)
     {
+<<<<<<< HEAD
         $form_data = $request->all();
         if ($cartoon->title == $form_data['title']) {
             $form_data['slug'] = $cartoon->slug;
@@ -85,6 +100,18 @@ class CartoonController extends Controller
             $form_data['slug'] = Cartoon::generateSlug($form_data['title']);
         }
         $cartoon->update($form_data);
+=======
+        $form_data = $request->except('_token');
+
+        if($cartoon->title === $form_data["title"]){
+            $form_data["slug"] = $cartoon->slug;
+        }else{
+            $form_data["slug"] = Cartoon::generateSlug($form_data["title"]);
+        }
+
+		$cartoon->update($form_data);
+
+>>>>>>> 6d7363966d2f402269186b579631dba990d20d7f
         return redirect()->route("cartoons.show", $cartoon);
     }
 
@@ -97,6 +124,11 @@ class CartoonController extends Controller
     public function destroy(Cartoon $cartoon)
     {
         $cartoon->delete();
+<<<<<<< HEAD
         return redirect()->route("cartoons.index");
+=======
+
+        return redirect()->route("cartoons.index")->with("deleted", "$cartoon->title è stato eliminato correttamente");
+>>>>>>> 6d7363966d2f402269186b579631dba990d20d7f
     }
 }
