@@ -4,6 +4,13 @@
 
     <div class="container">
         <h1>Elenco cartoon</h1>
+
+        @if(session("deleted"))
+            <div class="alert alert-success" role="alert">
+                <p>{{ session("deleted") }}</p>
+            </div>
+        @endif
+
         <table class="table">
             <thead>
                 <tr>
@@ -21,11 +28,13 @@
                         <td>{{ $cartoon->title }}</td>
                         <td>{{ $cartoon->year }}</td>
                         <td>{{ $cartoon->creator }}</td>
-                        <td>X</td>
+                        <td>
+                            <a href="{{ route("cartoons.show", $cartoon) }}" class="btn btn-success"><i class="fa-solid fa-circle-info"></i></a>
+                            <a href="{{ route("cartoons.edit", $cartoon) }}" class="btn btn-warning"><i class="fa-solid fa-pencil"></i></a>
+                            @include("partials.formDelete")
+                        </td>
                     </tr>
                 @endforeach
-
-
             </tbody>
         </table>
     </div>
